@@ -1,0 +1,8 @@
+1. It would be implemented using a lock that is passed through a queue
+   containing the cars in the order of their arrival.  It is suboptimal because
+   it doesn't consider situations where cars can both go through the
+   intersection at the same time without hitting each other, and it doesn't
+   take the relative speeds of the vehicles into account.
+
+2. All of the quarters being occupied at once would cause deadlock, since
+   no one would be able to move without causing an accident.

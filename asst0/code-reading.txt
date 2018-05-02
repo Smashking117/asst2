@@ -1,0 +1,18 @@
+﻿Question 1. $30
+Question 2. It is a simulator that mimics the bus of a computer; its base address is          
+                   (MIPS_KSEG1 + 0x1fe00000).
+Question 3. SPL_HIGH is the highest priority level spl can have; curspl is the current level.
+Question 4. 4096
+Question 5. splx takes an int as input.
+Question 6. coprocessor 0 register 12
+Question 7. 10000
+Question 8. A pid is 32 bits long, meaning there are 2 to the power 32 possible pids.
+Question 9. The number is 8; it can only be accessed by a shell program, not userspace.
+Question 10. These functions copy memory.  They protect against a user providing invalid memory 
+                      addresses.  They can be used to preserve data in the event of human error, or a malicious
+                      attack.
+Question 11. No, because the scheduler must preallocate memory for threads to use.
+Question 12. The states are run, ready, sleep, and zombie.  Zombie threads are cleaned up in the 
+                      exorcise function.
+Question 13. They are put to sleep in thread_sleep.  This function is useful for suspending a process to
+                      allow another process to be worked on by the cpu.

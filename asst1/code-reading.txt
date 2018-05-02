@@ -1,0 +1,29 @@
+﻿1.  The threads attributes are changed to Null and it is transformed into a
+    zombie; eventually it will be destroyed when exorcise() is called.
+
+2.  mi_switch() and thread_yield().
+
+3.  RUN means that it's running, READY means that it can start running at any
+    time, SLEEP means that it's suspended while the CPU works on other threads,
+    and ZOMB means that it's supposed to be destroyed but hasn't been yet.
+
+4.  Turning interrupts off prevents a thread from being interrupted during its
+    actions.  It is accomplished with splhigh().  It is important because the
+    thread sometimes need to perform certain actions atomically.
+
+5.  It removes the thread from the list of sleepers and makes it runnable.
+    A sleeping thread can run again when thread_wakeup() and mi_threadstart()
+    are called on it.
+
+6.  scheduler()
+
+7.  It chooses the next thread in the runqueue
+
+8.  The timer controls how much time must pass before control is changed to a
+    different thread.  A timer interrupt causes thread_wakeup() to be called.
+
+9.  thread_sleep() is used to prevent threads from running when the count is
+    zero, while thread_wake() will wake up a thread when the count is
+    incremented.  The argument switches the context to the semaphore.
+
+10. Because if the thread isn't the holder, then it shouldn't run.

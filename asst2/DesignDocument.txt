@@ -1,0 +1,41 @@
+Steven Braun
+Eric Thomas
+Assignment 2 Design Document
+
+Answers to code-reading questions:
+
+1. The "magic numbers" are a subset of the numbers that can appear in the
+   e_ident property of the elf header. They represent the characters in the
+   name "ELF."
+
+2. UIO_USERISPACE is used for user-created executable code, whereas
+   UIO_USERSPACE is used for user-created data.  UIO_SYSSPACE should only be
+   used to transfer data to and from the kernel.
+
+3. Because the uio also holds the virtual memory space the file was read to.
+
+4. Files should always be closed when they're not being used so other programs
+   can have access to them.
+
+5. mips_usermode in trap.c; it is not machine-dependent
+
+6. Copyin and Copyout are defined in copyinout.c, while memmove is defined in
+   memmove.c.  They cannot be implemented as simply because they have to
+   cross the boundry between kernel space and user space.
+
+7. It points to the address space availible for the user.
+
+8. 8
+
+9. To restore the previous spl once the function finishes its work.
+
+10. 4
+
+11. Because it doesn't have the code to actually kill the thread.
+
+12. You would have to use a pointer *args to point to where the extra arguments
+    are.
+
+13. To simplify the process of making a system call.
+
+14. syscall
