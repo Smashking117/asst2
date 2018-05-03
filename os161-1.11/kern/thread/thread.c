@@ -12,6 +12,7 @@
 #include <scheduler.h>
 #include <addrspace.h>
 #include <vnode.h>
+#include <process.h>
 #include "opt-synchprobs.h"
 
 /* States a thread can be in. */
@@ -62,6 +63,8 @@ thread_create(const char *name)
 	// If you add things to the thread structure, be sure to initialize
 	// them here.
 	
+	thread->p = NULL;  //This is the thread process.
+	
 	return thread;
 }
 
@@ -89,6 +92,7 @@ thread_destroy(struct thread *thread)
 	}
 
 	kfree(thread->t_name);
+	process_destroy(thread->p);
 	kfree(thread);
 }
 
@@ -231,7 +235,7 @@ thread_shutdown(void)
 int
 thread_fork(const char *name, 
 	    void *data1, unsigned long data2,
-	    void (*func)(void *, unsigned long),
+	    void (*func)(void *, unsigned long), struct process *p,
 	    struct thread **ret)
 {
 	struct thread *newguy;
@@ -263,6 +267,8 @@ thread_fork(const char *name,
 		newguy->t_cwd = curthread->t_cwd;
 	}
 
+	newguy->p = p;
+	
 	/* Set up the pcb (this arranges for func to be called) */
 	md_initpcb(&newguy->t_pcb, newguy->t_stack, data1, data2, func);
 
