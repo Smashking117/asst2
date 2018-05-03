@@ -4,12 +4,12 @@
 #include <process.h>
 #include <addrspace.h>
 #include <thread.h>
-#include <currthread.h>
+#include <curthread.h>
 
 void process_bootstrap(void){
 	int pid_table[32] = {0}; //initialize pid table
 	char *name = "initial";
-	currthread -> process = process_create(name);
+	curthread -> process = process_create(name);
 
 struct process * process_create(char *name){
 	struct process *ret = (struct process *)kmalloc(sizeof(struct process));
