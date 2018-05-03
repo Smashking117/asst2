@@ -16,11 +16,15 @@ struct process * process_create(char *name){
 	ret->name = name;
 	ret->space = as_create();
 	ret->pid = pid_allocate();
+	if(ret->pid == NULL){
+		return NULL;
+	}
+	return ret;
 }
 
 void process_destroy(struct process *p){
 	pid_table[pid-1] = 0;
-	//something with the address space
+	as_destroy(p->space);
 	kfree(p);
 }
 
