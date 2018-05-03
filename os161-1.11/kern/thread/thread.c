@@ -205,6 +205,9 @@ thread_bootstrap(void)
 
 	/* Set curthread */
 	curthread = me;
+	
+	//create initial process
+	process_bootstrap();
 
 	/* Number of threads starts at 1 */
 	numthreads = 1;
