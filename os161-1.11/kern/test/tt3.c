@@ -6,6 +6,7 @@
 #include <machine/spl.h>
 #include <synch.h>
 #include <thread.h>
+#include <process.h>
 #include <test.h>
 
 #include "opt-synchprobs.h"
@@ -101,13 +102,15 @@ make_sleepalots(int howmany)
 	int i, result;
 
 	for (i=0; i<howmany; i++) {
+		struct process *p = process_create(name);
 		snprintf(name, sizeof(name), "sleepalot%d", i);
-		result = thread_fork(name, NULL, i, sleepalot_thread, NULL);
+		result = thread_fork(name, NULL, i, sleepalot_thread, p, NULL);
 		if (result) {
 			panic("thread_fork failed: %s\n", strerror(result));
 		}
 	}
-	result = thread_fork("waker", NULL, 0, waker_thread, NULL);
+	struct process *p = process_create("waker");
+	result = thread_fork("waker", NULL, 0, waker_thread, p, NULL);
 	if (result) {
 		panic("thread_fork failed: %s\n", strerror(result));
 	}
@@ -179,7 +182,8 @@ make_computes(int howmany)
 
 	for (i=0; i<howmany; i++) {
 		snprintf(name, sizeof(name), "compute%d", i);
-		result = thread_fork(name, NULL, i, compute_thread, NULL);
+		struct process *p = process_create(name);
+		result = thread_fork(name, NULL, i, compute_thread, p, NULL);
 		if (result) {
 			panic("thread_fork failed: %s\n", strerror(result));
 		}

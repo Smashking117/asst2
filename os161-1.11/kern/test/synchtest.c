@@ -6,6 +6,7 @@
 #include <lib.h>
 #include <synch.h>
 #include <thread.h>
+#include <process.h>
 #include <test.h>
 #include <clock.h>
 
@@ -87,7 +88,8 @@ semtest(int nargs, char **args)
 	kprintf("ok\n");
 
 	for (i=0; i<NTHREADS; i++) {
-		result = thread_fork("semtest", NULL, i, semtestthread, NULL);
+		struct process *p = process_create("semtest");
+		result = thread_fork("semtest", NULL, i, semtestthread, p, NULL);
 		if (result) {
 			panic("semtest: thread_fork failed: %s\n", 
 			      strerror(result));
@@ -175,7 +177,8 @@ locktest(int nargs, char **args)
 	kprintf("Starting lock test...\n");
 
 	for (i=0; i<NTHREADS; i++) {
-		result = thread_fork("synchtest", NULL, i, locktestthread,
+		struct process *p = process_create("synchtest");
+		result = thread_fork("synchtest", NULL, i, locktestthread, p,
 				     NULL);
 		if (result) {
 			panic("locktest: thread_fork failed: %s\n",
@@ -258,7 +261,8 @@ cvtest(int nargs, char **args)
 	testval1 = NTHREADS-1;
 
 	for (i=0; i<NTHREADS; i++) {
-		result = thread_fork("synchtest", NULL, i, cvtestthread,
+		struct process *p = process_create("synchtest");
+		result = thread_fork("synchtest", NULL, i, cvtestthread, p,
 				      NULL);
 		if (result) {
 			panic("cvtest: thread_fork failed: %s\n",

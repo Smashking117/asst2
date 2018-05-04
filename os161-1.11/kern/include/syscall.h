@@ -7,5 +7,8 @@
 
 int sys_reboot(int code);
 
+int sys_getpid();
+
+int sys_fork(int32_t retval, void *data1);
 
 #endif /* _SYSCALL_H_ */

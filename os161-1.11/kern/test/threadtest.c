@@ -5,6 +5,7 @@
 #include <lib.h>
 #include <synch.h>
 #include <thread.h>
+#include <process.h>
 #include <test.h>
 
 #define NTHREADS  8
@@ -73,8 +74,9 @@ runthreads(int doloud)
 
 	for (i=0; i<NTHREADS; i++) {
 		snprintf(name, sizeof(name), "threadtest%d", i);
+		struct process *p = process_create(name);
 		result = thread_fork(name, NULL, i, 
-				     doloud ? loudthread : quietthread,
+				     doloud ? loudthread : quietthread, p,
 				     NULL);
 		if (result) {
 			panic("threadtest: thread_fork failed %s)\n", 

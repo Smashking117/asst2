@@ -9,6 +9,7 @@
 #include <lib.h>
 #include <clock.h>
 #include <thread.h>
+#include <process.h>
 #include <syscall.h>
 #include <uio.h>
 #include <vfs.h>
@@ -101,10 +102,10 @@ common_prog(int nargs, char **args)
 	kprintf("Warning: this probably won't work with a "
 		"synchronization-problems kernel.\n");
 #endif
-
+	struct process *p = process_create(args[0]);
 	result = thread_fork(args[0] /* thread name */,
 			args /* thread arg */, nargs /* thread arg */,
-			cmd_progthread, NULL);
+			cmd_progthread, p, NULL);
 	if (result) {
 		kprintf("thread_fork failed: %s\n", strerror(result));
 		return result;

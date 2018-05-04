@@ -5,6 +5,7 @@
 #include <lib.h>
 #include <synch.h>
 #include <thread.h>
+#include <process.h>
 #include <test.h>
 
 /*
@@ -91,7 +92,8 @@ mallocstress(int nargs, char **args)
 	kprintf("Starting kmalloc stress test...\n");
 
 	for (i=0; i<NTHREADS; i++) {
-		result = thread_fork("mallocstress", sem, i, mallocthread,
+		struct process *p = process_create("mallocstress");
+		result = thread_fork("mallocstress", sem, i, mallocthread, p,
 				     NULL);
 		if (result) {
 			panic("mallocstress: thread_fork failed: %s\n",

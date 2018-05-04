@@ -7,15 +7,15 @@
 extern int pid_table[32];
 
 struct process{
-	char *name; //name of process
+	const char *name; //name of process
 	int pid;    //we're managing pids within the processes
 	struct addrspace *space;   //We'll need to point to virtual memory
 };
 
-void process_bootstrap(void);  //initialize the process system
+void process_bootstrap(const char *name);  //initialize the process system
 
 int pid_allocate(void);  //allocate an availible pid
 
-struct process * process_create(char *name);  //self-explanetory
+struct process * process_create(const char *name);  //self-explanetory
 
 void process_destroy(struct process *p);

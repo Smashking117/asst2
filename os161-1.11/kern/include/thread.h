@@ -7,7 +7,6 @@
 
 /* Get machine-dependent stuff */
 #include <machine/pcb.h>
-#include <process.h>
 
 struct addrspace;
 
@@ -61,7 +60,7 @@ void thread_shutdown(void);
  */
 int thread_fork(const char *name, 
 		void *data1, unsigned long data2, 
-		void (*func)(void *, unsigned long),
+		void (*func)(void *, unsigned long), struct process *p,
 		struct thread **ret);
 
 /*

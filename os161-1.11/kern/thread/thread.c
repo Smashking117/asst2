@@ -207,7 +207,7 @@ thread_bootstrap(void)
 	curthread = me;
 	
 	//create initial process
-	process_bootstrap();
+	process_bootstrap("<boot/menu>");
 
 	/* Number of threads starts at 1 */
 	numthreads = 1;

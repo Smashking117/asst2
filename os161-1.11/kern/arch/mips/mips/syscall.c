@@ -73,7 +73,14 @@ mips_syscall(struct trapframe *tf)
 		break;
 
 	    /* Add stuff here */
- 
+
+	    case SYS_getpid:
+		err = 0;
+		retval = sys_getpid();
+
+	    case SYS_fork:
+		err = sys_fork(retval, tf);
+
 	    default:
 		kprintf("Unknown syscall %d\n", callno);
 		err = ENOSYS;
@@ -108,7 +115,7 @@ mips_syscall(struct trapframe *tf)
 }
 
 void
-md_forkentry(struct trapframe *tf)
+md_forkentry(struct trapframe *tf, struct addrspace *space)
 {
 	/*
 	 * This function is provided as a reminder. You need to write
@@ -117,5 +124,12 @@ md_forkentry(struct trapframe *tf)
 	 * Thus, you can trash it and do things another way if you prefer.
 	 */
 
-	(void)tf;
+	struct trapframe *t = kmalloc(sizeof(*tf));
+	memcpy(t,tf,sizeof(*tf));
+	kfree(tf);
+	t->tf_a3 = 0;
+	t->tf_v0 = 0;
+	t->tf_epc += 4;
+	as_activate(space);
+	mips_usermode(t);
 }
