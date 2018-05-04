@@ -414,6 +414,11 @@ fork.o: ${S}/userprog/fork.c
 SRCS+=${S}/userprog/fork.c
 OBJS+=fork.o
 
+execv.o: ${S}/userprog/execv.c
+	${COMPILE.c} ${S}/userprog/execv.c
+SRCS+=${S}/userprog/execv.c
+OBJS+=execv.o
+
 arraytest.o: ${S}/test/arraytest.c
 	${COMPILE.c} ${S}/test/arraytest.c
 SRCS+=${S}/test/arraytest.c

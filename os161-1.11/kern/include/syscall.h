@@ -11,4 +11,6 @@ int sys_getpid();
 
 int sys_fork(int32_t retval, void *data1);
 
+int sys_execv(char *program, char**args);
+
 #endif /* _SYSCALL_H_ */

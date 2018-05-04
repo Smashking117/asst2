@@ -12,12 +12,10 @@ int sys_fork(int32_t retval, void *data1){
 	retval = p->pid;
 	struct trapframe *newtf = kmalloc(sizeof(*data1));
 	memcpy(newtf,data1,sizeof(*data1));
-	int result = as_copy(curthread->p->space, &(p->space));
+	int result = thread_fork("child",&newtf,0,md_forkentry,p,NULL);
 	if(result){
-		process_destroy(p);
 		return result;
 	}
-	result = thread_fork("child",&newtf,0,md_forkentry,p,NULL);
 	return 0;
 }
 

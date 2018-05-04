@@ -2,7 +2,6 @@
 #include <kern/errno.h>
 #include <lib.h>
 #include <process.h>
-#include <addrspace.h>
 #include <thread.h>
 #include <curthread.h>
 
@@ -15,7 +14,6 @@ void process_bootstrap(const char *name){
 struct process * process_create(const char *name){
 	struct process *ret = (struct process *)kmalloc(sizeof(struct process));
 	ret->name = name;
-	ret->space = as_create();
 	ret->pid = pid_allocate();
 	if(ret->pid == -1){
 		return NULL;
@@ -25,7 +23,6 @@ struct process * process_create(const char *name){
 
 void process_destroy(struct process *p){
 	pid_table[(p->pid)-1] = 0;
-	as_destroy(p->space);
 	kfree(p);
 }
 

@@ -1,15 +1,10 @@
 //Simple definitions for processes. May need to be expanded.
-#define MAX_PID 32
-
-#include <thread.h>
-#include <addrspace.h>
 
 extern int pid_table[32];
 
 struct process{
 	const char *name; //name of process
 	int pid;    //we're managing pids within the processes
-	struct addrspace *space;   //We'll need to point to virtual memory
 };
 
 void process_bootstrap(const char *name);  //initialize the process system

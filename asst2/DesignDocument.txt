@@ -1,4 +1,5 @@
 Steven Braun
+
 Eric Thomas
 Assignment 2 Design Document
 
@@ -39,3 +40,36 @@ Answers to code-reading questions:
 13. To simplify the process of making a system call.
 
 14. syscall
+
+Our Approach:
+
+When examining the code, we noticed that threads essentially acted like
+processes as far as the operating system was concerned. That inspired our idea
+to simply have the process structure hold necessary information that the thread
+structure does not contain, and add a struct process to the thread structure.
+The information in struct process include the pid and the user address space.
+
+Description:
+
+The core of our implementation is the way pids are handled. We track pids using
+an external array of integers defined in process.h.  The array is initialized
+in process_bootstrap() to all zeroes.  Then, when a pid is allocated, the index
+corresponding to it is changed to a one. This allows rapid checking of pids
+without the tedium of linked lists or hash tables. The process structure is
+the only novel structure our implementation requires. This way, we can make
+efficient usage of already existing code.
+
+Pros and Cons:
+
+As mentioned previously, this approach allows higher level process management
+with minimal effort.  The downside is somewhat limited functionality.  For
+example, multiple threads within a process are not possible.  However, with
+the kinds of programs likely to be used with this os, it is unlikely that this
+will matter.
+
+Alternatives Considered:
+
+Hash tables and linked lists were considered to represent the pid table.
+They were rejected due to the existence of a simpler method, which was used
+for this project. The idea of a pid struct was also rejected for the same
+reason.

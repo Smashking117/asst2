@@ -6,6 +6,9 @@
 #include <machine/trapframe.h>
 #include <kern/callno.h>
 #include <syscall.h>
+#include <thread.h>
+#include <curthread.h>
+#include <addrspace.h>
 
 
 /*
@@ -81,6 +84,9 @@ mips_syscall(struct trapframe *tf)
 	    case SYS_fork:
 		err = sys_fork(retval, tf);
 
+	    case SYS_execv:
+		err = sys_execv((char *)(tf->tf_a0),(char**)(tf->tf_a1));
+
 	    default:
 		kprintf("Unknown syscall %d\n", callno);
 		err = ENOSYS;
@@ -115,7 +121,7 @@ mips_syscall(struct trapframe *tf)
 }
 
 void
-md_forkentry(struct trapframe *tf, struct addrspace *space)
+md_forkentry(void *tf, unsigned long data2)
 {
 	/*
 	 * This function is provided as a reminder. You need to write
@@ -124,12 +130,14 @@ md_forkentry(struct trapframe *tf, struct addrspace *space)
 	 * Thus, you can trash it and do things another way if you prefer.
 	 */
 
+	(void)data2;
 	struct trapframe *t = kmalloc(sizeof(*tf));
 	memcpy(t,tf,sizeof(*tf));
 	kfree(tf);
 	t->tf_a3 = 0;
 	t->tf_v0 = 0;
 	t->tf_epc += 4;
-	as_activate(space);
+	struct addrspace *pass = curthread->t_vmspace;
+	as_activate(pass);
 	mips_usermode(t);
 }
