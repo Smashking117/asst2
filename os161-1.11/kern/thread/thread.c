@@ -13,6 +13,7 @@
 #include <addrspace.h>
 #include <vnode.h>
 #include <process.h>
+#include <proc_node.h>
 #include "opt-synchprobs.h"
 
 struct proc_node head;
@@ -22,6 +23,7 @@ typedef enum {
 	S_RUN,
 	S_READY,
 	S_SLEEP,
+	S_EXITING,
 	S_ZOMB,
 } threadstate_t;
 
@@ -55,7 +57,7 @@ struct thread *get_thread_from_pid(int foo){
 
 void add_to_proclist(struct thread *t){
 	struct proc_node toadd;
-	toadd.thread = &t;
+	toadd.thread = t;
 	struct proc_node *cur = &head;
 	while(cur->next != NULL){
 		cur = cur->next;
@@ -72,6 +74,34 @@ void remove_from_proclist(struct thread *t){
 			break;
 		}
 	}
+}
+
+void add_to_waitlist(struct thread *waiter, struct thread *waitee){
+	struct proc_node temp = {waiter,waitee->waithead->next};
+	struct proc_node *toadd = &temp;
+	waitee->waithead->next = toadd;
+}
+
+void remove_from_waitlist(struct thread *waiter, struct thread *waitee){
+	struct proc_node *cur = waitee->waithead;
+	while(cur->next!=NULL){
+		if(cur->next->thread==waiter){
+			cur->next = cur->next->next;
+				break;
+		}
+	}
+}
+
+void wakeone(struct thread *t){
+	int i;
+	for(i=0;i<array_getnum(sleepers);i++){
+		struct thread *compare = array_getguy(sleepers, i);
+		if(&t==&compare){
+			array_remove(sleepers, i);
+			break;
+		}
+	}
+	make_runnable(t);
 }
 
 /*
@@ -102,6 +132,14 @@ thread_create(const char *name)
 	// them here.
 	
 	thread->p = NULL;  //This is the thread process.
+
+	thread->waithead->thread = NULL;
+
+	thread->waithead->next = NULL;
+
+	thread->exit_code = 0;
+
+	thread->exiting = 0;
 	
 	return thread;
 }
@@ -429,6 +467,13 @@ mi_switch(threadstate_t nextstate)
 		 */
 		result = array_add(sleepers, cur);
 	}
+	else if (nextstate==S_EXITING){
+		cur->exiting = 1;
+		while(cur->waithead->next != NULL){
+			wakeone(cur->waithead->next->thread);
+			cur->waithead->next = cur->waithead->next->next;
+		}
+	}
 	else {
 		assert(nextstate==S_ZOMB);
 		result = array_add(zombies, cur);
@@ -508,6 +553,9 @@ thread_exit(void)
 
 	assert(numthreads>0);
 	numthreads--;
+	if(curthread->waithead->next != NULL){
+		mi_switch(S_EXITING);
+	}
 	mi_switch(S_ZOMB);
 
 	panic("Thread came back from the dead!\n");

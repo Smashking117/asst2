@@ -11,6 +11,8 @@
 
 struct addrspace;
 
+struct proc_node;
+
 struct thread {
 	/**********************************************************/
 	/* Private thread members - internal to the thread system */
@@ -38,20 +40,20 @@ struct thread {
 	 */
 	struct vnode *t_cwd;
 	struct process *p;
+	struct proc_node *waithead;
+	int exit_code;
+	int exiting;
 };
-
-struct proc_node{
-	struct thread *thread;
-	struct proc_node *next;
-};
-
-extern struct proc_node head;
 
 struct thread *get_thread_from_pid(int foo);
 
 void add_to_proclist(struct thread *t);
 
 void remove_from_proclist(struct thread *t);
+
+void add_to_waitlist(struct thread *waiter, struct thread *waitee);
+
+void remove_from_waitlist(struct thread *waiter, struct thread *waitee);
 
 /* Call once during startup to allocate data structures. */
 struct thread *thread_bootstrap(void);

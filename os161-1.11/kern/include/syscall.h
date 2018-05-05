@@ -13,4 +13,8 @@ int sys_fork(int32_t retval, void *data1);
 
 int sys_execv(char *program, char**args);
 
+int sys_waitpid(int pid, userptr_t status, int options);
+
+void sys__exit(int code);
+
 #endif /* _SYSCALL_H_ */

@@ -296,7 +296,8 @@ thread.o: ../../thread/thread.c ../../include/types.h machine/types.h \
   machine/spl.h machine/pcb.h ../../include/thread.h \
   ../../include/curthread.h ../../include/scheduler.h \
   ../../include/addrspace.h ../../include/vm.h machine/vm.h opt-dumbvm.h \
-  ../../include/vnode.h ../../include/process.h opt-synchprobs.h
+  ../../include/vnode.h ../../include/process.h ../../include/proc_node.h \
+  opt-synchprobs.h
 main.o: ../../main/main.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h machine/ktypes.h ../../include/kern/errno.h \
   ../../include/kern/unistd.h ../../include/lib.h machine/setjmp.h \
@@ -351,6 +352,15 @@ execv.o: ../../userprog/execv.c ../../include/types.h machine/types.h \
   ../../include/addrspace.h ../../include/vm.h machine/vm.h opt-dumbvm.h \
   ../../include/thread.h machine/pcb.h ../../include/curthread.h \
   ../../include/vfs.h ../../include/test.h
+waitpid.o: ../../userprog/waitpid.c ../../include/types.h machine/types.h \
+  ../../include/kern/types.h machine/ktypes.h ../../include/kern/errno.h \
+  machine/spl.h ../../include/lib.h machine/setjmp.h \
+  ../../include/thread.h machine/pcb.h ../../include/process.h \
+  ../../include/curthread.h ../../include/syscall.h
+exit.o: ../../userprog/exit.c ../../include/types.h machine/types.h \
+  ../../include/kern/types.h machine/ktypes.h ../../include/kern/errno.h \
+  ../../include/lib.h machine/setjmp.h ../../include/thread.h \
+  machine/pcb.h ../../include/curthread.h ../../include/syscall.h
 arraytest.o: ../../test/arraytest.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h machine/ktypes.h ../../include/lib.h \
   machine/setjmp.h ../../include/array.h ../../include/test.h

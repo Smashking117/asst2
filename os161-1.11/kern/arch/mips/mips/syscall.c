@@ -87,6 +87,13 @@ mips_syscall(struct trapframe *tf)
 	    case SYS_execv:
 		err = sys_execv((char *)(tf->tf_a0),(char**)(tf->tf_a1));
 
+	    case SYS_waitpid:
+		err = sys_waitpid(tf->tf_a0,(userptr_t)tf->tf_a1,tf->tf_a2);
+		retval = tf->tf_a1;
+
+	    case SYS__exit:
+		sys__exit(tf->tf_a0);
+
 	    default:
 		kprintf("Unknown syscall %d\n", callno);
 		err = ENOSYS;
