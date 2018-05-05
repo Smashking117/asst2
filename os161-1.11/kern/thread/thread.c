@@ -15,6 +15,8 @@
 #include <process.h>
 #include "opt-synchprobs.h"
 
+struct proc_node head;
+
 /* States a thread can be in. */
 typedef enum {
 	S_RUN,
@@ -35,11 +37,47 @@ static struct array *zombies;
 /* Total number of outstanding threads. Does not count zombies[]. */
 static int numthreads;
 
+
+struct thread *get_thread_from_pid(int foo){
+	struct proc_node *cur = &head;
+	while(cur->next != NULL){
+		if(cur->thread->p->pid==foo){
+			struct thread *toreturn = cur->thread;
+			return toreturn;
+		}
+		else{
+			cur = cur->next;
+		}
+	}
+
+	return NULL;
+}
+
+void add_to_proclist(struct thread *t){
+	struct proc_node toadd;
+	toadd.thread = &t;
+	struct proc_node *cur = &head;
+	while(cur->next != NULL){
+		cur = cur->next;
+	}
+	struct proc_node *ptr = &toadd;
+	cur->next = ptr;
+}
+
+void remove_from_proclist(struct thread *t){
+	struct proc_node *cur = &head;
+	while(cur->next!=NULL){
+		if(cur->next->thread==t){
+			cur->next = cur->next->next;
+			break;
+		}
+	}
+}
+
 /*
  * Create a thread. This is used both to create the first thread's 
  * thread structure and to create subsequent threads.
  */
-
 static
 struct thread *
 thread_create(const char *name)
@@ -90,8 +128,8 @@ thread_destroy(struct thread *thread)
 	if (thread->t_stack) {
 		kfree(thread->t_stack);
 	}
-
 	kfree(thread->t_name);
+	remove_from_proclist(thread);
 	process_destroy(thread->p);
 	kfree(thread);
 }
@@ -208,7 +246,7 @@ thread_bootstrap(void)
 	
 	//create initial process
 	process_bootstrap("<boot/menu>");
-
+	add_to_proclist(curthread);
 	/* Number of threads starts at 1 */
 	numthreads = 1;
 
@@ -271,7 +309,6 @@ thread_fork(const char *name,
 	}
 
 	newguy->p = p;
-	
 	/* Set up the pcb (this arranges for func to be called) */
 	md_initpcb(&newguy->t_pcb, newguy->t_stack, data1, data2, func);
 
@@ -310,6 +347,7 @@ thread_fork(const char *name,
 	 * existence.
 	 */
 	numthreads++;
+	add_to_proclist(newguy);
 
 	/* Done with stuff that needs to be atomic */
 	splx(s);
